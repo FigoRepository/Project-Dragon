@@ -1,0 +1,101 @@
+"""
+Column map for the AEB O&M 'DB' sheet export.
+Each entry: (column_index, key, label, group, unit)
+Groups mirror the Akartha O&M Dashboard's Tabular Report column picker and the
+Data Dictionary & Calculation Matrix document, so the same vocabulary is used
+end-to-end across the Excel source, this app, and the reference documentation.
+"""
+
+COLUMN_MAP = [
+    (0, "no", "No", "Identity & Capacity", None),
+    (1, "project", "Project", "Identity & Capacity", None),
+    (2, "holding", "Holding", "Identity & Capacity", None),
+    (3, "company", "Company", "Identity & Capacity", None),
+    (4, "estate", "Estate", "Identity & Capacity", None),
+    (5, "site", "Site / Afdeling", "Identity & Capacity", None),
+    (6, "pv_kwp", "PV", "Identity & Capacity", "kWp"),
+    (7, "bess_kwh", "BESS", "Identity & Capacity", "kWh"),
+    (8, "inv_kva", "INV", "Identity & Capacity", "kVA"),
+    (9, "act_cod", "Act. COD", "Identity & Capacity", None),
+    (10, "opt_days", "Opt. Days", "Identity & Capacity", "days"),
+    (11, "opt_month", "Opt. Month", "Identity & Capacity", "months"),
+    (12, "load_kwh_day", "Load", "Cost", "kWh/day"),
+    (13, "cost_idr_month", "Cost", "Cost", "IDR/month"),
+    (14, "total_cost_idr", "Total Cost", "Cost", "IDR"),
+    (15, "target_coe_idr", "Target COE", "Cost", "IDR/kWh"),
+    (16, "target_coe_usd", "Target COE", "Cost", "USD/kWh"),
+    (17, "actual_coe_idr", "Actual COE", "Cost", "IDR/kWh"),
+    (18, "actual_coe_usd", "Actual COE", "Cost", "USD/kWh"),
+    (19, "load_target_kwh", "Target", "Load Supplied", "kWh"),
+    (20, "load_actual_kwh", "Actual", "Load Supplied", "kWh"),
+    (21, "load_diff_pct", "Diff", "Load Supplied", "%"),
+    (22, "pv_target_kwh", "Target", "PV Energy Production", "kWh"),
+    (23, "pv_actual_kwh", "Actual", "PV Energy Production", "kWh"),
+    (24, "pv_excess_pct", "Excess", "PV Energy Production", "%"),
+    (25, "pv_excess_kwh", "Excess (kWh)", "PV Energy Production", "kWh"),
+    (26, "re_penetr_pct", "RE Penetr.", "PV Energy Production", "%"),
+    (27, "spec_yield_target", "Target", "Specific Yield", "kWh/kWp/day"),
+    (28, "spec_yield_actual", "Actual", "Specific Yield", "kWh/kWp"),
+    (29, "spec_yield_diff_pct", "Diff", "Specific Yield", "%"),
+    (30, "pvmod_target_kwh", "Target", "PV Module Losses", "kWh"),
+    (31, "pvmod_target_pct", "Target", "PV Module Losses", "%"),
+    (32, "pvmod_actual_kwh", "Actual", "PV Module Losses", "kWh"),
+    (33, "pvmod_actual_pct", "Actual", "PV Module Losses", "%"),
+    (34, "pvmod_temp_kwh", "Temp.", "PV Module Losses", "kWh"),
+    (35, "pvmod_soil_kwh", "Soil", "PV Module Losses", "kWh"),
+    (36, "pvmod_shading_kwh", "Shading", "PV Module Losses", "kWh"),
+    (37, "inv_target_kwh", "Target", "Inverter Losses", "kWh"),
+    (38, "inv_target_pct", "Target", "Inverter Losses", "%"),
+    (39, "inv_actual_kwh", "Actual", "Inverter Losses", "kWh"),
+    (40, "inv_actual_pct", "Actual", "Inverter Losses", "%"),
+    (41, "inv_conversion_kwh", "Conversion", "Inverter Losses", "kWh"),
+    (42, "inv_mppt_kwh", "MPPT", "Inverter Losses", "kWh"),
+    (43, "inv_standby_kwh", "Stand by", "Inverter Losses", "kWh"),
+    (44, "batt_dod_pct", "DoD", "Battery Performance", "%"),
+    (45, "batt_soh_pct", "SoH", "Battery Performance", "%"),
+    (46, "batt_max_soc_pct", "Max SoC", "Battery Performance", "%"),
+    (47, "batt_min_soc_pct", "Min SoC", "Battery Performance", "%"),
+    (48, "batt_cycle", "Cycle", "Battery Performance", "times"),
+    (49, "dist_target_kwh", "Target", "Distribution Losses", "kWh"),
+    (50, "dist_target_pct", "Target", "Distribution Losses", "%"),
+    (51, "dist_actual_kwh", "Actual", "Distribution Losses", "kWh"),
+    (52, "dist_actual_pct", "Actual", "Distribution Losses", "%"),
+    (53, "dist_cable_kwh", "Cable DC/AC", "Distribution Losses", "kWh"),
+    (54, "dist_transformer_kwh", "Transformer", "Distribution Losses", "kWh"),
+    (55, "gen_production_kwh", "Production", "Genset Performance", "kWh"),
+    (56, "gen_fuel_lph", "Fuel", "Genset Performance", "L/h"),
+    (57, "gen_spec_fuel_lpkwh", "Spec. Fuel", "Genset Performance", "L/kWh"),
+    (58, "gen_loading_pct", "Loading", "Genset Performance", "%"),
+    (59, "gen_opt_hour", "Opt. Hour", "Genset Performance", "hour"),
+    (60, "gen_start_stop", "Start-Stop", "Genset Performance", "times"),
+    (61, "gen_maintenance", "Maintenance", "Genset Performance", "times"),
+    (62, "fuel_target_aeb_l", "Target AEB", "Fuel Savings", "L"),
+    (63, "fuel_act_aeb_l", "Act. AEB", "Fuel Savings", "L"),
+    (64, "fuel_target_client_l", "Target Client", "Fuel Savings", "L"),
+    (65, "fuel_act_client_l", "Act. Client", "Fuel Savings", "L"),
+    (66, "pq_frequency_hz", "Frequency", "Power Quality", "Hz"),
+    (67, "pq_voltage_v", "Voltage", "Power Quality", "V"),
+    (68, "pq_vfluct_v", "V Fluct.", "Power Quality", "V"),
+    (69, "pq_pf", "PF", "Power Quality", None),
+    (70, "env_co2_kg", "CO2", "Environmental Performance (Reduction)", "kg CO2"),
+    (71, "env_nox_kg", "NOx", "Environmental Performance (Reduction)", "kg NOx"),
+    (72, "env_sox_kg", "SOx", "Environmental Performance (Reduction)", "kg SOx"),
+    (73, "env_pm_kg", "PM", "Environmental Performance (Reduction)", "kg PM2.5"),
+    (74, "env_ccredit_idr", "C Credit", "Environmental Performance (Reduction)", "IDR"),
+]
+
+TEXT_COLS = {"project", "holding", "company", "estate", "site", "act_cod"}
+NUMERIC_COLS = [c[1] for c in COLUMN_MAP if c[1] not in TEXT_COLS]
+
+GROUP_ORDER = [
+    "Identity & Capacity", "Cost", "Load Supplied", "PV Energy Production",
+    "Specific Yield", "PV Module Losses", "Inverter Losses", "Battery Performance",
+    "Distribution Losses", "Genset Performance", "Fuel Savings", "Power Quality",
+    "Environmental Performance (Reduction)",
+]
+
+DEFAULT_TABULAR_KEYS = [
+    "project", "company", "estate", "site", "pv_kwp", "bess_kwh",
+    "load_actual_kwh", "re_penetr_pct", "gen_production_kwh",
+    "fuel_act_aeb_l", "fuel_act_client_l", "env_co2_kg",
+]
