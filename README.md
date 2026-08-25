@@ -1,29 +1,33 @@
-# Akartha O&M BI Dashboard — Streamlit MVP
+# Akartha O&M BI Dashboard — Streamlit (full port of the JSX mockup)
 
-This is the first working MVP of the Akartha O&M Business Intelligence Dashboard,
-rebuilt in Python/Streamlit so it can be deployed and shared with other users
-(the earlier version was a React mockup with dummy data — this one reads your
-real monthly Excel exports).
+This is a full Python/Streamlit port of the original React/JSX dashboard mockup —
+same 85-site mock data model, same five modules (Portfolio, Sites, Site Detail,
+Issues, Sustainability, Reports), same Akartha branding — so it can be deployed
+and shared with other users without needing a Node/React build pipeline.
 
-**Scope of this MVP:** the **Reports** module only (Client Report + Tabular
-Report), as agreed as the first priority. Portfolio, Sites, Issues, and
-Sustainability are stubbed in the sidebar as "coming soon" so the navigation
-structure is ready for the next build phase.
+This supersedes the earlier "Reports-only, real-Excel-upload" MVP. All data here
+is generated (seeded/deterministic, so numbers are stable across reloads), the
+same way the JSX version was. Wiring live data back in (via Excel upload or an
+API) is a natural next step, but out of scope for this port.
 
-## What it does
+## Pages
 
-1. You upload the current month's `DB`-sheet Excel export (same structure as
-   `AEB_Data_Asset_for_Pak_Imam.xlsx`) in the sidebar. Optionally upload the
-   previous month's file too, to unlock month-over-month deltas.
-2. **Client Report** tab: pick a Company, see the consolidated monthly report —
-   KPI cards (Listrik Tersalurkan, Persentase Energi Bersih, Jumlah Solar,
-   **Availability**), an energy-mix-per-site chart, the Solar Akartha vs.
-   Solar Client pie chart, a **Sustainability Impact** row (CO2 Avoided,
-   Equivalent Trees Planted, Diesel Savings), auto-written Key Achievements,
-   and a **Download PDF Report** button that renders the same report to a
-   clean, letterhead-style PDF.
-3. **Tabular Report** tab: pick which of the ~70 source columns to show,
-   filter by Project/Company/search, preview the table, export to CSV.
+- **Portfolio** — fleet KPIs, PV vs. consumption trend, REF trend (with its own
+  local date-range toggle), critical issues panel, sortable site ranking table.
+  Global filters: multi-select Project, date range (presets + custom), search.
+- **Sites** — card grid of all 85 sites + the same ranking table, filterable.
+- **Site Detail** — the five-segment monthly report per site: Energy
+  Utilization (waterfall chart), Power Plant Generation (daily energy flow +
+  irradiation), BESS Performance (SoC trend + SoH), DG Operation (runtime/fuel),
+  System Reliability (availability trend), plus site-linked issues. Reached by
+  clicking any site card or any ranking-table / issues-panel row.
+- **Issues** — severity/status-filterable list of all tracked issues.
+- **Sustainability** — Project/Site/date-scoped fuel, cost, and environmental
+  impact savings.
+- **Reports** — Client Report (per-company consolidated monthly report,
+  matching AEB's letterhead format, including a Listrik/REF%/Solar/Availability
+  KPI row and the Solar Akartha vs. Solar Client donut) and Tabular Report (a
+  grouped column picker over the full ~70-column data model, with CSV export).
 
 ## Run it locally
 
@@ -33,57 +37,41 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Then open the local URL Streamlit prints (usually `http://localhost:8501`).
+## Deploy (Streamlit Community Cloud — free)
 
-## Deploy so other people can use it (Streamlit Community Cloud — free)
-
-1. Push this folder to a **GitHub repository** (public or private).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with
-   GitHub.
-3. Click **New app**, pick the repository/branch, and set the main file path
-   to `app.py`.
-4. Deploy. Streamlit Cloud installs `requirements.txt` automatically and
-   gives you a shareable `*.streamlit.app` URL — no server management needed.
-5. Anyone with the link can open the app and upload their own monthly Excel
-   file; nothing is stored server-side beyond the current session.
-
-If AEB prefers internal hosting instead (e.g. behind the company VPN), the
-same app runs unchanged on any server with Python 3.10+ via
-`streamlit run app.py --server.port <port> --server.address 0.0.0.0`, or in a
-Docker container using the same `requirements.txt`.
+1. Push this folder's contents to a GitHub repository.
+2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with GitHub.
+3. **New app** -> pick the repo/branch -> set **Main file path** to `app.py`.
+   - If you upload this folder as a subfolder of your repo (e.g.
+     `repo/akartha_streamlit/app.py`), set the main file path to
+     `akartha_streamlit/app.py` instead.
+4. Deploy. Make sure `requirements.txt` and `rows_data.json` are pushed too —
+   `rows_data.json` holds the 85-site roster and is loaded at startup.
 
 ## File structure
 
 | File | Purpose |
 |---|---|
-| `app.py` | Streamlit UI — sidebar, Client Report, Tabular Report |
-| `data_loader.py` | Reads & validates the uploaded `DB` sheet into a DataFrame |
-| `column_map.py` | Column catalog (index → key → label → group → unit), shared by the loader and the Tabular Report column picker |
-| `report_calcs.py` | KPI aggregation, month-over-month deltas, Key Achievements text |
-| `charts.py` | Matplotlib charts (pie, energy-mix bar), shared by the on-screen view and the PDF |
-| `pdf_export.py` | Builds the downloadable PDF report (ReportLab) |
-| `utils.py` | Indonesian-style number formatting |
-| `.streamlit/config.toml` | Brand theme colors |
+| `app.py` | Streamlit UI — sidebar nav, all 6 pages, session-state routing |
+| `data_model.py` | Full port of the JSX data generator: seeded RNG, 85-site roster, per-site metrics, issues |
+| `charts_plotly.py` | Plotly chart builders (trend, waterfall, energy flow, donut, bars) |
+| `report_columns.py` | Column catalog for the Tabular Report picker |
+| `report_calcs_mock.py` | Client Report & Sustainability KPI aggregation |
+| `utils.py` | Indonesian-style number formatting (used in Client Report) |
+| `rows_data.json` | The 85-row site roster (extracted from the original JSX `ROWS` array) |
+| `.streamlit/config.toml` | Brand theme colors (backup only — the app's CSS forces the theme at runtime regardless) |
 
-## Data assumptions / things to confirm before wider rollout
+## Notes
 
-- **Availability (%)** is not an explicit column in the source workbook (no
-  uptime/outage-hours field exists in the `DB` sheet). It is computed as
-  `Load Supplied Actual ÷ Load Supplied Target × 100` — a load-achievement
-  proxy for availability, not a true logged-uptime figure. Swap this formula
-  once a dedicated outage-hours field is added to the export.
-- **Diesel Savings** = `(Target AEB + Target Client) − (Actual AEB + Actual
-  Client)` fuel litres, floored at 0. A month where actual diesel usage
-  exceeds the plan (e.g. due to lower-than-planned availability) will
-  correctly show 0 savings rather than a negative number.
-- The uploaded workbook's **percentage-formatted cells are stored as
-  fractions (0–1) in Excel**; the loader multiplies every `%`-unit column by
-  100 on load. If a future export changes this convention, update
-  `PCT_KEYS` handling in `data_loader.py`.
-- **Critical Issue** section is a placeholder ("--") in this MVP — it isn't
-  wired to a real issue tracker yet. Wiring it up (e.g. to the
-  `Project_Operations_Issue_List` workbook) is a good next increment.
-- The loader validates the sheet against a handful of expected header
-  positions (Company, Load Supplied Target, Genset Production, CO2) and
-  raises a clear error if an uploaded file doesn't match the expected `DB`
-  sheet layout, rather than silently mis-reading columns.
+- The sidebar/theme CSS is injected at runtime with `!important` overrides
+  targeting Streamlit's actual DOM (`data-testid` attributes) rather than
+  relying solely on `.streamlit/config.toml`, since that file is a hidden
+  folder that's easy to accidentally leave out of a GitHub push, and
+  Streamlit Cloud can otherwise fall back to a dark theme that makes text
+  unreadable against this app's light background.
+- All figures are deterministic (seeded RNG), so the same site always shows
+  the same numbers across reloads and across users — useful for demos.
+- The `SNE|EU` issue-prone key intentionally matches both the Alpha and Alpha
+  Extension projects' Senyiur EU rows (same behavior as the JSX version), so
+  you'll see that site flagged twice in the roster — this mirrors the source
+  workbook, not a bug.
